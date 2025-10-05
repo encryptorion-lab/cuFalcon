@@ -27,7 +27,7 @@ cd cuFalcon_1024
 ```
 
 ## License
-This project (cuFalcon) is released under GPLv3 license. See [COPYING](COPYING) for more information.
+This project (cuFalcon) is released under GPLv3 license. See [LICENSE](LICENSE) for more information.
 
 Some files contain the modified code from [Falcon official repository](https://falcon-sign.info/impl/falcon.h.html). These codes are released under MIT License.
 
