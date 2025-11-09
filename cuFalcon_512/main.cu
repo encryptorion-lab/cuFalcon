@@ -173,7 +173,6 @@ int main() {
                 h_expanded_key[j * (15 * Falcon_N) + i].v = *(double *) &test_expanded_key[i];
     }
 
-    // 记录起始时间
     cudaEventRecord(startEvent);
     for (int s = 0; s < stream_num; s++) {
         uint8_t *s_h_seed = h_seed + s * BATCH * 48 * sizeof(uint8_t);
