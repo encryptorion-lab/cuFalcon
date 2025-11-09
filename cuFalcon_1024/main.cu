@@ -414,10 +414,8 @@ int main() {
 
     cudaEventRecord(startEvent_ver);
     for (int s = 0; s < stream_num; s++) {
-        // 每个 stream 的内存池基址（第 s 段）
         uint8_t *stream_mem_pool_verify = d_ver_mem_pool + s * BATCH * ver_mem_pool_pitch;
 
-        // 每个 stream 的 host 数据起点
         uint8_t *s_h_sm = h_sm + s * BATCH * (MLEN + CRYPTO_BYTES);
         uint8_t *s_h_m = h_m + s * BATCH * (MLEN + CRYPTO_BYTES);
         uint32_t *s_h_smlen = h_smlen + s * BATCH;
@@ -459,7 +457,6 @@ int main() {
         cudaMemcpy2DAsync(d_m, ver_mem_pool_pitch, s_h_m, (MLEN + CRYPTO_BYTES) * sizeof(uint8_t),
                           MLEN * sizeof(uint8_t), BATCH, cudaMemcpyHostToDevice, stream[s]);
 
-        // 异步执行验证
         crypto_ver(s_h_sm, s_h_m, stream_mem_pool_verify, ver_mem_pool_pitch, stream[s]);
 
         cudaMemcpy2DAsync(s_h_tmp, Falcon_N * sizeof(uint16_t), d_tmp, ver_mem_pool_pitch, Falcon_N * sizeof(uint16_t),
