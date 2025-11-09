@@ -25,9 +25,9 @@ void crypto_sign_tree(uint8_t *h_sm,
     uint8_t *d_m = d_sk + ALIGN_TO_128_BYTES(CRYPTO_SECRETKEYBYTES);
     uint8_t *d_esig = d_m + ALIGN_TO_128_BYTES(MLEN);
     uint8_t *d_seed = d_esig + ALIGN_TO_128_BYTES(CRYPTO_BYTES - 2 - NONCELEN);
-    uint8_t *d_nonce = d_seed + ALIGN_TO_128_BYTES(48);  // m
+    uint8_t *d_nonce = d_seed + ALIGN_TO_128_BYTES(48);  
     uint8_t *d_sm = d_nonce + ALIGN_TO_128_BYTES(NONCELEN);
-    uint16_t *d_hm = (uint16_t *) (d_sm + ALIGN_TO_128_BYTES(MLEN + CRYPTO_BYTES));  // d_bb
+    uint16_t *d_hm = (uint16_t *) (d_sm + ALIGN_TO_128_BYTES(MLEN + CRYPTO_BYTES));  
     uint32_t *d_sqn = (uint32_t *) (d_hm + ALIGN_TO_128_BYTES(Falcon_N * sizeof(uint16_t)) / sizeof(uint16_t));
     uint32_t *d_s = d_sqn + ALIGN_TO_128_BYTES(sizeof(uint32_t)) / sizeof(uint32_t);
     uint32_t *d_esiglen = d_s + ALIGN_TO_128_BYTES(sizeof(uint32_t)) / sizeof(uint32_t);
@@ -131,8 +131,8 @@ void crypto_sign(uint8_t *h_sm, uint8_t *h_seed, uint8_t *h_nonce, uint8_t *h_es
     fft_polymul<<<BATCH, Falcon_N / 2, 0, stream>>>(d_bb, d_bb + Falcon_N, d_bb + 2 * Falcon_N, d_bb + 3 * Falcon_N, d_bb + 4 * Falcon_N, d_bb + 5 * Falcon_N, d_bb + 6 * Falcon_N, d_bb + 7 * Falcon_N, d_sign_mem_pool_pitch);
     ifft_t<<<BATCH, 128, 0, stream>>>(d_bb + 4 * Falcon_N, d_bb + 5 * Falcon_N, d_sign_mem_pool_pitch);
 
-    auto d_s1tmp = (int16_t *) d_bb + 6 * Falcon_N;   // tx
-    auto d_s2tmp = (int16_t *) d_bb;       // tmp
+    auto d_s1tmp = (int16_t *) d_bb + 6 * Falcon_N;  
+    auto d_s2tmp = (int16_t *) d_bb;       
     check1<<<BATCH, 1, 0, stream>>>(d_s1tmp, d_bb + 4 * Falcon_N, d_hm, d_sqn, d_sign_mem_pool_pitch);
     check2<<<BATCH, Falcon_N, 0, stream>>>(d_s2tmp, d_bb + 5 * Falcon_N, d_sign_mem_pool_pitch);
     is_short_half_gpu<<<BATCH, 1, 0, stream>>>(d_sqn, d_s2tmp, d_s, d_sign_mem_pool_pitch);
@@ -175,10 +175,10 @@ void crypto_sign_balance(fpr *d_nttbb, uint8_t *d_sign_mem_pool, size_t d_sign_m
     fft_polymul<<<BATCH, 256, 0, stream>>>(d_bb, d_bb + Falcon_N, d_bb + 2 * Falcon_N, d_bb + 3 * Falcon_N, d_bb + 4 * Falcon_N, d_bb + 5 * Falcon_N, d_bb + 6 * Falcon_N, d_bb + 7 * Falcon_N, d_sign_mem_pool_pitch);
     ifft_t<<<BATCH, 128, 0, stream>>>(d_bb + 4 * Falcon_N, d_bb + 5 * Falcon_N, d_sign_mem_pool_pitch);
 
-    auto d_s1tmp = (int16_t *) d_bb + 6 * Falcon_N;   // tx
-    auto d_s2tmp = (int16_t *) d_bb;       // tmp
-    check1<<<BATCH, 1, 0, stream>>>(d_s1tmp, d_bb + 4 * Falcon_N, d_hm, d_sqn, d_sign_mem_pool_pitch);// warp_shuffle做累加
-    check2<<<BATCH, Falcon_N, 0, stream>>>(d_s2tmp, d_bb + 5 * Falcon_N, d_sign_mem_pool_pitch); //he shang yige fusing
+    auto d_s1tmp = (int16_t *) d_bb + 6 * Falcon_N;  
+    auto d_s2tmp = (int16_t *) d_bb;    
+    check1<<<BATCH, 1, 0, stream>>>(d_s1tmp, d_bb + 4 * Falcon_N, d_hm, d_sqn, d_sign_mem_pool_pitch);
+    check2<<<BATCH, Falcon_N, 0, stream>>>(d_s2tmp, d_bb + 5 * Falcon_N, d_sign_mem_pool_pitch); 
     is_short_half_gpu<<<BATCH, 1, 0, stream>>>(d_sqn, d_s2tmp, d_s, d_sign_mem_pool_pitch);
     comp_encode_gpu<<<BATCH, 32, 0, stream>>>(d_esig + 1, (CRYPTO_BYTES - 2 - NONCELEN - 1), d_s2tmp, LOGN, d_esiglen, d_sign_mem_pool_pitch);
     byte_copy<<<BATCH, MLEN, 0, stream>>>(d_sm + 2 + NONCELEN, d_m, (MLEN + CRYPTO_BYTES), MLEN, d_sign_mem_pool_pitch);
@@ -195,7 +195,7 @@ void crypto_ver(uint8_t *h_sm, uint8_t *h_m,
     cudaEvent_t startEvent, stopEvent;
     cudaEventCreate(&startEvent);
     cudaEventCreate(&stopEvent);
-    float total_time = 0.0f;  // 所有流的总耗时
+    float total_time = 0.0f; 
 
     cudaEventRecord(startEvent);
 
